@@ -27,6 +27,84 @@ Choose one local setup:
 - Node.js and npm
 - SQLite PHP extension
 
+## Windows setup
+
+### Prasyarat Windows
+
+- Windows 10/11
+- Docker Desktop dengan WSL2 backend aktif
+- Git for Windows
+- Composer
+- Node.js dan npm
+- PowerShell atau Windows Terminal
+
+### Windows + Docker Desktop
+
+Buka PowerShell:
+
+```powershell
+git clone https://github.com/Reain2/Grace.git
+Set-Location Grace
+Copy-Item .env.example .env
+composer install
+npm install
+```
+
+Ubah database di `.env`:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=sail
+DB_PASSWORD=password
+```
+
+Jalankan Docker Desktop, lalu:
+
+```powershell
+.\vendor\bin\sail up -d
+.\vendor\bin\sail artisan key:generate
+.\vendor\bin\sail artisan migrate:fresh --seed
+npm run build
+```
+
+Buka `http://localhost`.
+
+Jika `vendor/bin/sail` tidak berjalan langsung di PowerShell, jalankan command yang sama melalui WSL2 Ubuntu:
+
+```bash
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan migrate:fresh --seed
+```
+
+### Windows tanpa Docker + SQLite
+
+Install PHP dengan SQLite extension, Composer, dan Node.js. Dari PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+composer install
+npm install
+New-Item -ItemType File -Force database\database.sqlite
+php artisan key:generate
+php artisan migrate:fresh --seed
+npm run build
+php artisan serve
+```
+
+Buka `http://localhost:8000`.
+
+### Windows troubleshooting
+
+- `Docker daemon is not running`: buka Docker Desktop dan tunggu status `Running`.
+- `sail is not recognized`: gunakan `.\vendor\bin\sail` atau jalankan dari WSL2.
+- `php is not recognized`: tambahkan folder PHP ke Windows PATH.
+- `composer is not recognized`: install Composer lalu buka terminal baru.
+- Port `80` atau `3306` bentrok: matikan service yang memakai port tersebut atau ubah port di `compose.yaml` dan `.env`.
+- Permission/error filesystem: simpan project di filesystem Linux WSL2, misalnya `~/projects/Grace`, bukan folder sinkronisasi cloud.
+
 ## Option A: Docker + MySQL
 
 ```bash
