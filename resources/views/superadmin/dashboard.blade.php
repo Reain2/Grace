@@ -1,0 +1,4 @@
+<x-app-layout>
+    <x-slot name="header"><p class="heritage-label">Ruang sistem</p><h1 class="mt-2 text-3xl font-semibold">Superadmin</h1><p class="mt-3" style="color: var(--heritage-muted)">Kelola pengawasan lintas tradisi.</p></x-slot>
+    <div class="heritage-container grid gap-5 py-10 md:grid-cols-2"><a href="{{ route('superadmin.verifications.index') }}" class="heritage-surface block p-6"><p class="heritage-label">Review</p><h2 class="mt-3 text-xl font-semibold">Semua verifikasi</h2><p class="mt-2 text-sm" style="color: var(--heritage-muted)">Tinjau request dari semua tradisi.</p></a><a href="{{ route('superadmin.audit-logs.index') }}" class="heritage-surface block p-6"><p class="heritage-label">Jejak</p><h2 class="mt-3 text-xl font-semibold">Audit log</h2><p class="mt-2 text-sm" style="color: var(--heritage-muted)">Periksa aksi administratif.</p></a></div>
+</x-app-layout>

@@ -1,0 +1,43 @@
+@import url('https://fonts.bunny.net/css?family=inter:400,500,600,700|public-sans:400,500,600|space-grotesk:500,600');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --heritage-ink: #201c13;
+        --heritage-muted: #7b715b;
+        --heritage-accent: #ffe4a8;
+        --heritage-paper: #f8f7f7;
+        --heritage-surface: #ffffff;
+        --heritage-border: #e8e6e3;
+    }
+
+    body {
+        background: var(--heritage-paper);
+        color: var(--heritage-ink);
+        font-family: 'Public Sans', sans-serif;
+    }
+
+    h1, h2, h3, h4, button, a {
+        font-family: 'Inter', sans-serif;
+    }
+
+    :focus-visible {
+        outline: 3px solid var(--heritage-accent);
+        outline-offset: 3px;
+    }
+}
+
+@layer components {
+    .heritage-shell { @apply min-h-screen; background: var(--heritage-paper); }
+    .heritage-container { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8; }
+    .heritage-surface { @apply border; background: var(--heritage-surface); border-color: var(--heritage-border); }
+    .heritage-label { @apply font-semibold uppercase; color: var(--heritage-muted); font-family: 'Space Grotesk', sans-serif; font-size: .75rem; letter-spacing: .08em; }
+    .heritage-button { @apply inline-flex min-h-11 items-center justify-center px-5 py-3 text-sm font-semibold transition; border-radius: 4px; }
+    .heritage-button-primary { @apply heritage-button; background: var(--heritage-accent); color: #0a0a0a; }
+    .heritage-button-primary:hover { background: #f5d58c; }
+    .heritage-button-secondary { @apply heritage-button border; background: transparent; border-color: var(--heritage-ink); color: var(--heritage-ink); }
+    .heritage-button-secondary:hover { background: var(--heritage-ink); color: var(--heritage-surface); }
+}
