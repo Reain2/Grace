@@ -1,40 +1,43 @@
 # Grace
 
-Platform pendamping kehidupan rohani lintas tradisi untuk demo dan testing.
+Grace is a multi-tradition spiritual-life platform for demo and local testing. It supports six traditions, role-based access, manual verification, content isolation, reading plans, reminders, events, journaling, calendars, notifications, and admin auditing.
 
-## Fork dan jalankan lokal
+## Repository
 
-### Prasyarat
+```text
+https://github.com/Reain2/Grace
+```
+
+## Prerequisites
+
+Choose one local setup:
+
+### Docker setup
 
 - Git
-- Docker Desktop aktif
-- Docker Compose tersedia melalui Docker Desktop
+- Docker Desktop
 - Composer
-- Node.js dan npm
+- Node.js and npm
 
-### Setup dari fork
+### SQLite fallback
 
-1. Fork repository melalui GitHub.
-2. Clone fork milikmu:
+- Git
+- PHP 8.4+
+- Composer
+- Node.js and npm
+- SQLite PHP extension
+
+## Option A: Docker + MySQL
 
 ```bash
 git clone https://github.com/Reain2/Grace.git
 cd Grace
-```
-
-3. Siapkan aplikasi:
-
-```bash
 cp .env.example .env
 composer install
 npm install
 ```
 
-4. Pilih salah satu cara menjalankan aplikasi.
-
-#### Docker + MySQL
-
-Setelah `cp .env.example .env`, ubah bagian database di `.env` menjadi:
+Set database values in `.env`:
 
 ```dotenv
 DB_CONNECTION=mysql
@@ -45,7 +48,7 @@ DB_USERNAME=sail
 DB_PASSWORD=password
 ```
 
-Lalu jalankan:
+Start application:
 
 ```bash
 ./vendor/bin/sail up -d
@@ -54,9 +57,28 @@ Lalu jalankan:
 npm run build
 ```
 
-#### Tanpa Docker + SQLite
+Open `http://localhost`.
+
+For hot reload:
 
 ```bash
+npm run dev
+```
+
+Stop Docker services:
+
+```bash
+./vendor/bin/sail down
+```
+
+## Option B: PHP + SQLite without Docker
+
+```bash
+git clone https://github.com/Reain2/Grace.git
+cd Grace
+cp .env.example .env
+composer install
+npm install
 touch database/database.sqlite
 php artisan key:generate
 php artisan migrate:fresh --seed
@@ -64,37 +86,74 @@ npm run build
 php artisan serve
 ```
 
-5. Buka `http://localhost`.
+Open `http://localhost:8000`.
 
-Landing page Grace akan menampilkan tombol masuk dan daftar. Untuk development dengan hot reload, gunakan terminal kedua:
+SQLite database file is local-only and ignored by Git. SQLite and MySQL use the same migrations and seeders.
 
-```bash
-npm run dev
-```
+## Option C: Import SQL demo dump
 
-Hentikan container:
+`database/grace_demo.sql` contains demo schema and seeded data. It does not contain `.env` values or application secrets. Passwords inside dump are demo password hashes only.
 
-```bash
-./vendor/bin/sail down
-```
-
-Reset database dan seluruh data demo:
+Create a MySQL database, then import:
 
 ```bash
-./vendor/bin/sail artisan migrate:fresh --seed
+mysql -u root -p -e "CREATE DATABASE grace CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u root -p grace < database/grace_demo.sql
 ```
 
-## Akun demo
+Configure `.env` to point to that database before starting Laravel.
 
-Password semua akun demo lokal: `password`.
+Recommended path remains migrations + seed because it is portable across database versions.
 
-- Superadmin: `superadmin@grace.test`
-- Admin agama: `admin.islam@grace.test`, `admin.katolik@grace.test`, dan akun admin untuk empat tradisi lain
-- User approved: `user.islam@grace.test`, `user.katolik@grace.test`, dan akun user untuk empat tradisi lain
-- User pending: `pending.islam@grace.test`, dan akun pending untuk lima tradisi lain
-- User rejected: `rejected.islam@grace.test`, dan akun rejected untuk lima tradisi lain
+## Demo accounts
 
-Slug tradisi:
+All demo accounts use password `password`. Demo credentials are for local testing only.
+
+### Superadmin
+
+```text
+superadmin@grace.test
+```
+
+### Religion admins
+
+```text
+admin.katolik@grace.test
+admin.kristen-protestan@grace.test
+admin.buddha@grace.test
+admin.hindu@grace.test
+admin.konghucu@grace.test
+admin.islam@grace.test
+```
+
+### Approved users
+
+```text
+user.katolik@grace.test
+user.kristen-protestan@grace.test
+user.buddha@grace.test
+user.hindu@grace.test
+user.konghucu@grace.test
+user.islam@grace.test
+```
+
+### Pending users
+
+Use `pending.<slug>@grace.test`, for example:
+
+```text
+pending.islam@grace.test
+```
+
+### Rejected users
+
+Use `rejected.<slug>@grace.test`, for example:
+
+```text
+rejected.islam@grace.test
+```
+
+Tradition slugs:
 
 ```text
 katolik
@@ -105,64 +164,84 @@ konghucu
 islam
 ```
 
-Semua akun dan konten demo bersifat fiktif. Jangan upload KTP asli. Proof hanya foto dummy untuk pengujian. Jangan menjalankan demo seeder pada production.
+All seeded names, content, proof files, and accounts are fictional. Never upload a real identity document.
 
-## Alur pengujian utama
+## Main test flow
 
-1. Login sebagai `pending.islam@grace.test`.
-2. Buka dashboard dan status verifikasi. Halaman dapat dilihat, tetapi interaksi terkunci.
-3. Login sebagai `admin.islam@grace.test`.
-4. Buka antrean verifikasi, klaim request, lihat proof dummy, lalu approve atau reject.
-5. Login kembali sebagai user approved.
-6. Coba quotes, bookmark, reading plan, progress, streak, reminder, event, journal, kalender, dan notifikasi.
-7. Login sebagai `superadmin@grace.test` untuk audit log, kelola tradisi, admin agama, dan semua verifikasi.
-8. Uji isolasi: admin Islam tidak boleh melihat atau mengubah data Hindu.
+1. Open `/` and use landing-page login/register actions.
+2. Register a new user with a dummy image.
+3. Login as a pending user. Dashboard and verification status are readable; interactive features stay locked.
+4. Login as the matching religion admin. Claim proof, inspect dummy proof, approve or reject.
+5. Login as an approved user. Test quotes, bookmarks, reading plans, progress, streak, reminders, events, journal, calendar, and notifications.
+6. Login as superadmin. Test all-tradition verification, tradition management, religion-admin management, and audit log.
+7. Verify isolation: Islam admin cannot view or mutate Hindu records.
 
-## Stack
+## Useful commands
 
-- Laravel 12
-- Blade, Tailwind CSS, Alpine.js
-- MySQL 8.4 melalui Laravel Sail
-- PHPUnit
-
-## Fitur lokal
-
-- Enam tradisi: Katolik, Kristen Protestan, Buddha, Hindu, Konghucu, Islam.
-- Auth dan tiga role: user, admin agama, superadmin.
-- Registrasi proof dummy dan verifikasi manual.
-- Claim expiry, reject, resubmit, dan ganti tradisi.
-- Isolasi konten berdasarkan tradisi.
-- Quotes, bookmark, publish workflow.
-- Reading plan, version tracking, progress, streak, dan satu hari jeda.
-- Reminder database, delivery history, scheduler, dan mail log.
-- Event, RSVP, quota, dan waitlist.
-- Journal pribadi.
-- Kalender hari penting tahunan dasar.
-- Notification center database.
-- Audit log dan statistik admin dasar.
-- Heritage UI dengan responsive layout, focus state, dan reduced-motion support.
-
-## Perintah validasi
+### Docker
 
 ```bash
-./vendor/bin/sail pint --test
-./vendor/bin/sail artisan test
+./vendor/bin/sail up -d
 ./vendor/bin/sail artisan migrate:fresh --seed
+./vendor/bin/sail artisan test
+./vendor/bin/sail pint --test
 ./vendor/bin/sail artisan schedule:list
+./vendor/bin/sail artisan reminders:send
+./vendor/bin/sail artisan proofs:purge
+./vendor/bin/sail down
+```
+
+### Local PHP + SQLite
+
+```bash
+php artisan migrate:fresh --seed
+php artisan test
+vendor/bin/pint --test
+php artisan schedule:list
+php artisan reminders:send
+php artisan proofs:purge
+```
+
+### Frontend and dependency checks
+
+```bash
 npm run build
 composer audit
 ```
 
-## Struktur dokumentasi
+## Stack
 
-- `MD_FILES/PRD.md`: kebutuhan produk.
-- `MD_FILES/ARCHITECTURE.md`: rancangan arsitektur.
-- `MD_FILES/DESIGN.md`: arah UI/UX.
-- `MD_FILES/audit.md`: audit perencanaan.
-- `MD_FILES/bug.md`: temuan teknis dari dokumen awal.
-- `MD_FILES/remaining.md`: pekerjaan tersisa.
-- `bug.md`: potential bugs implementasi lokal.
+- Laravel 12
+- PHP 8.5 runtime in Docker
+- Blade, Tailwind CSS, Alpine.js
+- MySQL 8.4 through Laravel Sail
+- SQLite fallback for local development
+- PHPUnit
+- GitHub Actions
 
-## Status
+## Current features
 
-Project siap diuji lokal dengan Docker. GitHub Actions tersedia untuk validasi dependency, migration, Pint, PHPUnit, dan asset build. Fitur production email, kalender lunar resmi, statistik tren/export, dan manual browser QA masih di luar finishing lokal.
+- Six traditions: Katolik, Kristen Protestan, Buddha, Hindu, Konghucu, Islam.
+- User, religion-admin, and superadmin roles.
+- Registration with dummy proof and manual verification.
+- Claim expiry, reject, resubmit, and tradition change re-verification.
+- Tradition-isolated quotes, bookmarks, reading plans, events, and calendars.
+- Reading progress, streak, one rest day, and plan version tracking.
+- Reminder CRUD, timezone validation, delivery history, scheduler, database notification, and mail-log channel.
+- Event RSVP, quota, waitlist, and interfaith visibility.
+- Private journal.
+- Database notification center.
+- Audit log and admin statistics.
+- Heritage UI with responsive layout, keyboard focus, skip link, and reduced-motion support.
+
+## Security and demo limits
+
+- Dummy proof only. Never use real KTP or identity documents.
+- Demo passwords are intentionally simple and must never be used in production.
+- Email uses Laravel mail log by default.
+- Production email provider, official lunar holiday data, trend exports, and manual browser QA remain release tasks.
+- Do not run demo seeders in production.
+
+## Project status
+
+Local MVP is functional and validated with automated tests on Docker/MySQL and SQLite. GitHub Actions validates Composer dependencies, migrations, Pint, PHPUnit, and frontend build.
