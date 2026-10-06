@@ -18,7 +18,7 @@ Platform pendamping kehidupan rohani lintas tradisi untuk demo dan testing.
 2. Clone fork milikmu:
 
 ```bash
-git clone https://github.com/<username>/Grace.git
+git clone https://github.com/Reain2/Grace.git
 cd Grace
 ```
 
