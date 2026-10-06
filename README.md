@@ -30,13 +30,38 @@ composer install
 npm install
 ```
 
-4. Jalankan Docker dan buat database demo:
+4. Pilih salah satu cara menjalankan aplikasi.
+
+#### Docker + MySQL
+
+Setelah `cp .env.example .env`, ubah bagian database di `.env` menjadi:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=sail
+DB_PASSWORD=password
+```
+
+Lalu jalankan:
 
 ```bash
 ./vendor/bin/sail up -d
 ./vendor/bin/sail artisan key:generate
 ./vendor/bin/sail artisan migrate:fresh --seed
 npm run build
+```
+
+#### Tanpa Docker + SQLite
+
+```bash
+touch database/database.sqlite
+php artisan key:generate
+php artisan migrate:fresh --seed
+npm run build
+php artisan serve
 ```
 
 5. Buka `http://localhost`.

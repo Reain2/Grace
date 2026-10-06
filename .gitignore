@@ -7,6 +7,8 @@
 /storage/*.key
 /storage/pail
 /vendor
+MD_FILES/
+/database/*.sqlite
 .env
 .env.backup
 .env.production
