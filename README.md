@@ -96,6 +96,101 @@ php artisan serve
 
 Buka `http://localhost:8000`.
 
+### Windows native PHP + MySQL: Laragon, XAMPP, or manual PHP
+
+Docker is optional. Laragon is recommended because it includes PHP, MySQL, and a local web environment in one installer. XAMPP also works.
+
+#### Laragon
+
+1. Install Laragon with PHP 8.4+ and MySQL.
+2. Start `Apache` or `Nginx` and `MySQL` from Laragon.
+3. Create a database named `laravel` using Laragon database tools.
+4. In project PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+composer install
+npm install
+php artisan key:generate
+```
+
+5. Set `.env`:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Use the MySQL username and password configured by Laragon if different. Then run:
+
+```powershell
+php artisan migrate:fresh --seed
+npm run build
+php artisan serve
+```
+
+Open `http://localhost:8000`.
+
+#### XAMPP
+
+1. Start `Apache` and `MySQL` in XAMPP Control Panel.
+2. Open phpMyAdmin and create database `laravel` with collation `utf8mb4_unicode_ci`.
+3. Open PowerShell in project folder.
+4. Ensure PHP and Composer are available in PATH, or use their full paths.
+5. Configure `.env`:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+6. Run:
+
+```powershell
+composer install
+npm install
+php artisan key:generate
+php artisan migrate:fresh --seed
+npm run build
+php artisan serve
+```
+
+Open `http://localhost:8000`.
+
+#### Manual PHP + existing MySQL
+
+Use the same `.env` values as XAMPP. Confirm these PHP extensions are enabled in `php.ini`:
+
+```text
+fileinfo
+mbstring
+openssl
+pdo
+pdo_mysql
+xml
+zip
+```
+
+Check the active PHP installation:
+
+```powershell
+php --version
+php -m
+composer --version
+node --version
+npm --version
+```
+
+Then run `composer install`, `npm install`, `php artisan key:generate`, `php artisan migrate:fresh --seed`, `npm run build`, and `php artisan serve`.
+
 ### Windows troubleshooting
 
 - `Docker daemon is not running`: buka Docker Desktop dan tunggu status `Running`.

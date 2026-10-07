@@ -16,7 +16,7 @@
             @endif
         </section>
         <aside class="border p-6 sm:p-8" style="border-color: var(--heritage-ink); background: var(--heritage-ink); color: var(--heritage-surface)">
-            <p class="heritage-label" style="color: var(--heritage-accent)">Agama</p>
+            <p class="heritage-label" style="color: var(--heritage-accent)">Tradisi</p>
             <h2 class="mt-3 text-2xl font-semibold">{{ auth()->user()->tradition?->name ?? 'Belum dipilih' }}</h2>
             <p class="mt-4 text-sm leading-6" style="color: #e8e6e3">Konten di ruang ini mengikuti Agama yang terhubung dengan akunmu.</p>
         </aside>
